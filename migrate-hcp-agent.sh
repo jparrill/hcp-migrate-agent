@@ -201,6 +201,10 @@ function render_agent_objects {
     for s in $(${OC} get secret -n ${AGENT_NAMESPACE} --no-headers | awk '{print $1}'); do
         ${OC} get secret -n ${AGENT_NAMESPACE} $s -o yaml  > ${BACKUP_DIR}/namespaces/${AGENT_NAMESPACE}/secret-${s}.yaml
     done
+
+    # Role in the Agent Namespace
+    echo "$( date ) render_agent_objects: --> Agent Roles"
+    ${OC} get role -n ${AGENT_NAMESPACE} capi-provider-role -o yaml  > ${BACKUP_DIR}/namespaces/${AGENT_NAMESPACE}/role-capi-provider-role.yaml
 }
 
 function render_hc_objects {
@@ -517,6 +521,7 @@ function restore_hc() {
     restore_object "cl" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_object "aci" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_object "cd" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
+    restore_object "role" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_object "secret" ${AGENT_NAMESPACE}
     restore_object "role" ${AGENT_NAMESPACE}
     restore_object "ie" ${AGENT_NAMESPACE}
