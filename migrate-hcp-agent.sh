@@ -256,7 +256,7 @@ function render_hc_objects {
 
     # CAPI Agent Role
     echo "$( date ) render_hc_objects: --> Roles"
-    ${OC} get role capi-provider-role -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml > ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/role-${HC_CLUSTER_NAME}.yaml
+    ${OC} get role capi-provider -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml > ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/role-${HC_CLUSTER_NAME}.yaml
 
     # Hosted Control Plane
     echo "$( date ) render_hc_objects: --> HostedControlPlane"
