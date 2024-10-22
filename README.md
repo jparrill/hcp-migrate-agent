@@ -1,7 +1,6 @@
 # BM HCP Migration Script (Alpha)
 
 ## Filling the variables:
------
 
 This is an explanation of what is every env var used in the script:
 
