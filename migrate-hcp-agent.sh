@@ -250,9 +250,13 @@ function render_hc_objects {
 
     # Secrets in the HC Control Plane Namespace
     echo "$( date ) render_hc_objects: --> HostedCluster ControlPlane Secrets"
-    for s in $(${OC} get secret -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}  | egrep -v "docker|service-account-token|oauth-openshift|NAME|token-${HC_CLUSTER_NAME}" | awk '{print $1}'); do
+    for s in $(${OC} get secret -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}  | egrep -v "service-account-token|oauth-openshift|NAME|token-${HC_CLUSTER_NAME}" | awk '{print $1}'); do
         ${OC} get secret  -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} $s -o yaml > ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/secret-${s}.yaml
     done
+
+    # CAPI Agent Role
+    echo "$( date ) render_hc_objects: --> Roles"
+    ${OC} get role capi-provider-role -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o yaml > ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}/role-${HC_CLUSTER_NAME}.yaml
 
     # Hosted Control Plane
     echo "$( date ) render_hc_objects: --> HostedControlPlane"
@@ -373,7 +377,7 @@ function restore_object() {
                 yq eval 'del(.metadata.ownerReferences,.metadata.creationTimestamp,.metadata.resourceVersion,.metadata.uid,.status)' $f | ${OC} apply --server-side=true -f -
             done
             ;;
-        "aci" | "cd" | "agent" | "ie" | "bmh")
+        "aci" | "cd" | "agent" | "ie" | "bmh" | "role")
             # Cleaning the YAML files before apply them
             for f in $(ls -1 ${BACKUP_DIR}/namespaces/${2}/${1}-*); do
                 yq eval 'del(.metadata.creationTimestamp,.metadata.resourceVersion,.metadata.uid)' $f | ${OC} apply --server-side=true -f -
@@ -514,6 +518,7 @@ function restore_hc() {
     restore_object "aci" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_object "cd" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_object "secret" ${AGENT_NAMESPACE}
+    restore_object "role" ${AGENT_NAMESPACE}
     restore_object "ie" ${AGENT_NAMESPACE}
     restore_object "bmh" ${AGENT_NAMESPACE}
     restore_object "agent" ${AGENT_NAMESPACE}
