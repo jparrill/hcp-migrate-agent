@@ -577,7 +577,7 @@ function teardown_old_hc() {
     # Machines
     echo "$( date ) teardown_old_hc: delete machines.cluster.x-k8s.io"
     for m in $(${OC} get machines.cluster.x-k8s.io -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name); do
-        ${OC} patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]' || true
+        ${OC} patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
         ${OC} delete -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} || true
     done
 
@@ -587,13 +587,19 @@ function teardown_old_hc() {
     echo "$( date ) teardown_old_hc: delete cluster"
     C_NAME=$(${OC} get cluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name)
     ${OC} patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${C_NAME} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
-    ${OC} delete cluster.cluster.x-k8s.io -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all
+    ${OC} delete cluster.cluster.x-k8s.io -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all || true
+
+    # Agent Cluster
+    echo "$( date ) teardown_old_hc: delete agent cluster"
+    C_NAME=$(${OC} get agentcluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name)
+    ${OC} patch agentcluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${C_NAME} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
+    ${OC} delete agentcluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --all || true
 
     # Agent Machines
     echo "$( date ) teardown_old_hc: delete agentmachine"
     for m in $(${OC} get agentmachine -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} -o name)
     do
-        ${OC} patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]' || true
+        ${OC} patch -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} --type=json --patch='[ { "op":"remove", "path": "/metadata/finalizers" }]'
         ${OC} delete -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} ${m} || true
     done
 
