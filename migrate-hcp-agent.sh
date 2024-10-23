@@ -240,7 +240,7 @@ function render_hc_objects {
 
     # Secrets in the HC Namespace
     echo "$( date ) render_hc_objects: --> HostedCluster Secrets"
-    for s in $(${OC} get secret -n ${HC_CLUSTER_NS}  | grep "^${HC_CLUSTER_NAME}" | awk '{print $1}'); do
+    for s in $(${OC} get secret -n ${HC_CLUSTER_NS}  | grep "${HC_CLUSTER_NAME}" | awk '{print $1}'); do
         ${OC} get secret -n ${HC_CLUSTER_NS} $s -o yaml  > ${BACKUP_DIR}/namespaces/${HC_CLUSTER_NS}/secret-${s}.yaml
     done
 
