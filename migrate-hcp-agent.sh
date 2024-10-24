@@ -735,7 +735,7 @@ if [ "$(uname -s)" == "Darwin" ]; then
     SEDCMD="gsed"
 fi
 
-commands=("base64" "curl" "jq" "oc" "openssl" "yq" "${SEDCMD}")
+commands=("base64" "curl" "jq" "oc" "openssl" "yq" "${SEDCMD}" "kubectl" "aws")
 for cmd in "${commands[@]}"
 do
     echo "Checking to see if $cmd command is available..."
