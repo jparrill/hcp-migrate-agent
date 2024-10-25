@@ -381,7 +381,13 @@ function restore_object() {
                 yq eval 'del(.metadata.ownerReferences,.metadata.creationTimestamp,.metadata.resourceVersion,.metadata.uid,.status)' $f | ${OC} apply --server-side=true -f -
             done
             ;;
-        "aci" | "cd" | "agent" | "ie" | "bmh" | "role")
+        "aci" | "cd")
+            # Cleaning the YAML files before apply them
+            for f in $(ls -1 ${BACKUP_DIR}/namespaces/${2}/${1}-*); do
+                yq eval 'del(.metadata.ownerReferences,.metadata.creationTimestamp,.metadata.resourceVersion,.metadata.uid)' $f | ${OC} apply --server-side=true -f -
+            done
+            ;;
+        "agent" | "ie" | "bmh" | "role")
             # Cleaning the YAML files before apply them
             for f in $(ls -1 ${BACKUP_DIR}/namespaces/${2}/${1}-*); do
                 yq eval 'del(.metadata.creationTimestamp,.metadata.resourceVersion,.metadata.uid)' $f | ${OC} apply --server-side=true -f -
