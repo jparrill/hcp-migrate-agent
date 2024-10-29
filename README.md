@@ -13,6 +13,18 @@ This is an explanation of what is every env var used in the script:
 - `BUCKET_NAME`: This is the AWS bucket name. (Sample: cs-hcp-dr)
 - `AWS_ACCESS_KEY_ID`: AWS Access Key ID (Usually located under ~/.aws/credentials)
 - `AWS_SECRET_ACCESS_KEY`: AWS Secret Access Key (Usually located under ~/.aws/credentials)
+- `MGMT2_REGION`: AWS Region where the s3 bucket with etcd backup resisdes eg ap-southeast-1
+
+## Required CLI
+- base64
+- curl
+- jq
+- oc
+- openssl
+- yq
+- sed
+-kubectl
+- aws
 
 ## Usage
 
