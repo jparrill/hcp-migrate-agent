@@ -23,7 +23,7 @@ This is an explanation of what is every env var used in the script:
 - openssl
 - yq
 - sed
--kubectl
+- kubectl
 - aws
 
 ## Usage
