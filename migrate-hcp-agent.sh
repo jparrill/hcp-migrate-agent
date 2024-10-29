@@ -104,15 +104,7 @@ function change_reconciliation() {
                 do
                     ${OC} patch -n ${HC_CLUSTER_NS} nodepools/${nodepool} -p '{"spec":{"pausedUntil":"'${PAUSED_UNTIL}'"}}' --type=merge
                 done
-                # Restart AgentMachine & AgentCluster
-                oc annotate agentcluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} cluster.x-k8s.io/paused- --overwrite=true --all
-                oc annotate agentmachine -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} cluster.x-k8s.io/paused- --overwrite=true --all
-
-                # Restart Cluster
-                oc annotate cluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} cluster.x-k8s.io/paused- --overwrite=true --all
-                # Annotate HC to remove deleting hosted control plane namespace annotation
-                oc annotate -n ${HC_CLUSTER_NS} hostedclusters/${HC_CLUSTER_NAME} hypershift.openshift.io/skip-delete-hosted-controlplane-namespace- --overwrite=true
-
+                unpause_agent
                 ${OC} scale deployment -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} --replicas=1 kube-apiserver openshift-apiserver openshift-oauth-apiserver control-plane-operator
             fi
             ;;
@@ -122,6 +114,17 @@ function change_reconciliation() {
             ;;
     esac
 
+}
+
+function unpause_agent() {
+    # Restart AgentMachine & AgentCluster
+    oc annotate agentcluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} cluster.x-k8s.io/paused- --overwrite=true --all
+    oc annotate agentmachine -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} cluster.x-k8s.io/paused- --overwrite=true --all
+
+    # Restart Cluster
+    oc annotate cluster -n ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME} cluster.x-k8s.io/paused- --overwrite=true --all
+    # Annotate HC to remove deleting hosted control plane namespace annotation
+    oc annotate -n ${HC_CLUSTER_NS} hostedclusters/${HC_CLUSTER_NAME} hypershift.openshift.io/skip-delete-hosted-controlplane-namespace- --overwrite=true
 }
 
 function check_aws_creds() {
@@ -541,6 +544,7 @@ function restore_hc() {
     restore_object "machineset" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_etcd
     restore_object "np" ${HC_CLUSTER_NS}
+    unpause_agent
 }
 
 function restore_svc() {
