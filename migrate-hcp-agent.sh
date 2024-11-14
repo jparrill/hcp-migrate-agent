@@ -544,6 +544,7 @@ function restore_hc() {
     restore_object "machineset" ${HC_CLUSTER_NS}-${HC_CLUSTER_NAME}
     restore_etcd
     restore_object "np" ${HC_CLUSTER_NS}
+    restore_object "hc" ${HC_CLUSTER_NS}
     unpause_agent
 }
 
